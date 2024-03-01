@@ -12,13 +12,13 @@ SmartCash é uma API de gestão financeira para pequenas empresas, projetada par
     - [Editar](#detalhar-fluxo-de-caixa)
 
 - Despesas
-    -(em desenvolvimento)
+    - (em desenvolvimento)
 
 - Faturamento
-    -(em desenvolvimento)
+    - (em desenvolvimento)
 
 - Relatório
-    -(em desenvolvimento)
+    - (em desenvolvimento)
 
 ### Listar Todos
 `GET` /fluxodecaixa
