@@ -70,4 +70,19 @@ public class FluxoDeCaixaController {
         }
         return ResponseEntity.status(200).body(fluxoAtualizado);
     }
+    @RequestMapping(method = RequestMethod.PUT, path = "/fluxodecaixa/{id}")
+    @ResponseBody
+    public ResponseEntity<FluxoDeCaixa> remove(@PathVariable Long id, @RequestBody FluxoDeCaixa fluxoDeCaixa) {
+        log.info("buscando categoria com id {}", id);
+
+        var fluxoEncontrado = fluxoLista.stream().filter(c -> c.getId().equals(id)).findFirst();
+
+        if (fluxoEncontrado.isEmpty()) {
+            log.info("Fluxo de caixa com ID {} não encontrado", id);
+            return ResponseEntity.status(404).build();
+        }
+
+        fluxoLista.remove(fluxoEncontrado.get());
+
+    }
 }
