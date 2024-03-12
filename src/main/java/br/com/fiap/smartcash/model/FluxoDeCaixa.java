@@ -1,15 +1,18 @@
 package br.com.fiap.smartcash.model;
-import java.util.Random;
 
-public record FluxoDeCaixa(Long id,String tipo, double valor, String descricao, String data) {
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import lombok.Data;
 
-    public FluxoDeCaixa(Long id,String tipo, double valor, String descricao, String data){
-        var key = (id != null) ? id : Math.abs( new Random(10).nextLong());
-        this.id = key;
-        this.tipo = tipo;
-        this.valor = valor;
-        this.descricao = descricao;
-        this.data = data;
-    }
+@Data
+@Entity
+public class FluxoDeCaixa{
+
+    @Id
+    private Long id;
+    private String tipo;
+    private double valor;
+    private String descricao;
+    private String data;
     
 }  
