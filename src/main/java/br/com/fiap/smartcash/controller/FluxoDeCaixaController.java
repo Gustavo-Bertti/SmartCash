@@ -6,79 +6,73 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.NO_CONTENT;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
+
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
+
 import br.com.fiap.smartcash.model.FluxoDeCaixa;
 import br.com.fiap.smartcash.repository.FluxoDeCaixaRepository;
+import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @RequestMapping("/fluxodecaixa")
+@Slf4j
 public class FluxoDeCaixaController {
 
-    Logger log = LoggerFactory.getLogger(getClass());
     
     @Autowired
     FluxoDeCaixaRepository repository;
 
     @GetMapping
-    public List<FluxoDeCaixa> index() {
+    public List<FluxoDeCaixa> getAll() {
         return repository.findAll();
     }
 
-    // @PostMapping
-    // public ResponseEntity<FluxoDeCaixa> create(@RequestBody FluxoDeCaixa fluxoDeCaixa) {
-    //     log.info("cadastrando categoria: {},", fluxoDeCaixa);
-    //     fluxoLista.add(fluxoDeCaixa);
-    //     return ResponseEntity.status(HttpStatus.CREATED).body(fluxoDeCaixa);
-    // }
+    @PostMapping
+    @ResponseStatus(CREATED)
+    public FluxoDeCaixa create(@RequestBody FluxoDeCaixa fluxoDeCaixa) {
+        log.info("cadastrando fluxo de caixa: {},", fluxoDeCaixa);
+        return repository.save(fluxoDeCaixa);
+    }
 
-    // @GetMapping(path = "{id}")
-    // public ResponseEntity<FluxoDeCaixa> get(@PathVariable Long id) {
-    //     log.info("buscando categoria com id {}", id);
+    @GetMapping(path = "{id}")
+    public ResponseEntity<FluxoDeCaixa> get(@PathVariable Long id) {
+        log.info("buscando fluxo de caixa com id {}", id);
 
-    //     // stream
-    //     var fluxodecaixa = fluxoLista.stream().filter(c -> c.id().equals(id)).findFirst();
+        return repository.findById(id).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
+    }
 
-    //     log.info("categoria encontrada: {}", fluxodecaixa);
+    @PutMapping(path = "{id}")
+    public FluxoDeCaixa update(@PathVariable Long id, @RequestBody FluxoDeCaixa fluxoDeCaixa) {
+        log.info("buscando fluxo de caixa com id {}", id);
+        verificarSeExisteCategoria(id);
+        fluxoDeCaixa.setId(id);
+        repository.save(fluxoDeCaixa);
+        return fluxoDeCaixa;
+       
+    }
+    @DeleteMapping(path = "{id}")
+    @ResponseStatus(NO_CONTENT)
+    public void remove(@PathVariable Long id) {
+        log.info("buscando fluxo de caixa com id {}", id);
+        verificarSeExisteCategoria(id);
+        repository.deleteById(id);
+       
+    }
 
-    //     if (fluxodecaixa == null) {
-    //         return ResponseEntity.status(404).build();
-    //     }
-    //      return ResponseEntity.ok().body(fluxodecaixa.get());
-    // }
-
-    // @PutMapping(path = "{id}")
-    // public ResponseEntity<FluxoDeCaixa> put(@PathVariable Long id, @RequestBody FluxoDeCaixa fluxoDeCaixa) {
-    //     log.info("buscando categoria com id {}", id);
-
-    //     // stream
-    //     var fluxoencontrado = fluxoLista.stream().filter(c -> c.id().equals(id)).findFirst();
-    //     FluxoDeCaixa fluxoAtualizado = new FluxoDeCaixa(fluxoencontrado.get().id(), fluxoDeCaixa.tipo(),
-    //             fluxoDeCaixa.valor(), fluxoDeCaixa.descricao(), fluxoDeCaixa.data());
-    //     fluxoLista.remove(fluxoencontrado.get());
-    //     fluxoLista.add(fluxoAtualizado);
-
-    //     log.info("categoria encontrada e alterado: {}", fluxoAtualizado);
-
-    //     if (fluxoencontrado == null){
-    //         return ResponseEntity.status(404).build();
-    //     }
-    //     return ResponseEntity.ok().body(fluxoAtualizado);
-    // }
-    // @DeleteMapping(path = "{id}")
-    // public ResponseEntity<FluxoDeCaixa> remove(@PathVariable Long id, @RequestBody FluxoDeCaixa fluxoDeCaixa) {
-    //     log.info("buscando categoria com id {}", id);
-
-    //     var fluxoEncontrado = fluxoLista.stream().filter(c -> c.id().equals(id)).findFirst();
-
-    //     if (fluxoEncontrado.isEmpty()) {
-    //         log.info("Fluxo de caixa com ID {} não encontrado", id);
-    //         return ResponseEntity.status(404).build();
-    //     }
-
-    //     fluxoLista.remove(fluxoEncontrado.get());
-    //     return ResponseEntity.noContent().body(fluxoEncontrado.get());
-
-    // }
+    private void verificarSeExisteCategoria(Long id) {
+        repository.findById(id).orElseThrow(() -> new ResponseStatusException(NOT_FOUND, "id da categoria não encontrado"));
+    }
 }
