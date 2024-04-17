@@ -1,6 +1,7 @@
 package br.com.fiap.smartcash.controller;
 
 
+import java.time.LocalDate;
 import java.util.List;
 
 
@@ -41,6 +42,7 @@ public class FluxoDeCaixaController {
     @PostMapping
     @ResponseStatus(CREATED)
     public FluxoDeCaixa create(@RequestBody @Valid FluxoDeCaixa fluxoDeCaixa) {
+        fluxoDeCaixa.setDataInclusao(LocalDate.now());
         return repository.save(fluxoDeCaixa);
     }
 

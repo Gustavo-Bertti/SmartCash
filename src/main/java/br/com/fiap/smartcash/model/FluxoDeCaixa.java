@@ -28,6 +28,6 @@ public class FluxoDeCaixa{
     @NotBlank @Size(min = 3, max = 250)
     private String descricao;
     
-    private LocalDate data_inclusao = LocalDate.now();
+    private LocalDate dataInclusao;
     
 }  
