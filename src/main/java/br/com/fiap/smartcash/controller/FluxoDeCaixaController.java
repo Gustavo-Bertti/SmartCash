@@ -2,10 +2,14 @@ package br.com.fiap.smartcash.controller;
 
 
 import java.time.LocalDate;
-import java.util.List;
+
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
+
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,6 +18,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.NO_CONTENT;
 import static org.springframework.http.HttpStatus.NOT_FOUND;
@@ -23,11 +29,12 @@ import org.springframework.web.server.ResponseStatusException;
 import br.com.fiap.smartcash.model.FluxoDeCaixa;
 import br.com.fiap.smartcash.repository.FluxoDeCaixaRepository;
 import jakarta.validation.Valid;
-import lombok.extern.slf4j.Slf4j;
+
+
 
 @RestController
 @RequestMapping("/fluxodecaixa")
-@Slf4j
+
 public class FluxoDeCaixaController {
 
     
@@ -35,8 +42,9 @@ public class FluxoDeCaixaController {
     FluxoDeCaixaRepository repository;
 
     @GetMapping
-    public List<FluxoDeCaixa> readAll() {
-        return repository.findAll();
+    public Page<FluxoDeCaixa> index(@PageableDefault(size = 5,sort = "valor") Pageable pageable) {
+        
+        return repository.findAll(pageable);
     }
 
     @PostMapping
